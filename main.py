@@ -19,6 +19,7 @@ def convert_source(instructions):
     new_instructions = []
 
     for i, instruction in enumerate(instructions):
+        instruction = instruction.split(" ")
 
         if len(instruction) == 1:
             # Just one instruction by itself. This needs to become the memory address associated with the instruction followed by the instruction again.
