@@ -1,3 +1,6 @@
+import re
+
+
 def create_memory():
     # Creates a list of one hundred "000" to represent the memory of the computer.
     return ["000" for _ in range(100)]
@@ -9,6 +12,22 @@ def index_to_memory_address(index):
 
     else:
         return str(index)
+
+
+def clean_instructions(instructions):
+    instructions = instructions.split("\n")
+
+    for i, instruction in enumerate(instructions):
+        instruction = re.sub(r"\/\/.+", "", instruction)
+        instruction = re.sub(r" {2,}", " ", instruction)
+        instruction = re.sub(r"^ ", "", instruction)
+        instruction = re.sub(r" $", "", instruction)
+
+        instructions[i] = instruction
+
+    instructions = list(filter(lambda x: x != "\n", instructions))
+
+    return "\n".join(instructions)
 
 
 def convert_source(instructions):
@@ -138,7 +157,7 @@ def create_program_memory(source):
     return memory
 
 
-def run_program(memory):
+def run_memory(memory):
     # Takes in a program in the format of memory and will run through it.
 
     program_counter = 0
@@ -202,38 +221,85 @@ def run_program(memory):
     return output
 
 
-program = """INP
-STA VALUE
-LDA ONE
-STA MULT
-OUTER LDA ZERO
-STA SUM
-STA TIMES
-INNER LDA SUM
-ADD VALUE
-STA SUM
-LDA TIMES
-ADD ONE
-STA TIMES
-SUB MULT
-BRZ NEXT
-BRA INNER
-NEXT LDA SUM
-OUT
-LDA MULT
-ADD ONE
-STA MULT
-SUB VALUE
-BRZ OUTER
-BRP DONE
-BRA OUTER
-DONE HLT
-VALUE DAT 0
-MULT DAT 0
-SUM DAT
-TIMES DAT
-COUNT DAT
-ZERO DAT 000
-ONE DAT 001"""
+def run_program(program):
+    # This function combines all the code above to run a set of instructions and return whatever is in the out box.
+    return run_memory(create_program_memory(convert_source(clean_instructions(program))))
 
-print(run_program(create_program_memory(convert_source(program))))
+
+def run_file(path):
+    # This will run the instructions at file 'path'.
+    return run_program(open(path, "r").read())
+
+
+def main():
+    LOADED = ""
+
+    print("PythonLMC:")
+    print("==========")
+
+    print("\nWhat would you like to do? You can `load`, `run` or `take`. You can also perform `help` to see a list of extended options.")
+
+    while True:
+        # load <X> - Load file <X> into the code.
+        # run - Run the loaded file.
+        # take - Brings up a prompt asking for input which is then loaded into the program.
+        # help - Shows help.
+
+        # print - Print the loaded instructions.
+        # cleaned - Print the contents of the cleaned program.
+        # source - Print the converted source.
+        # memory - Print the memory at the beginning of the program.
+
+        program_input = input(">>> ")
+        program_input = program_input.split(" ")
+
+        if len(program_input) == 2:
+            if program_input[0] == "load":
+                LOADED = open(program_input[1], "r").read()
+
+        elif len(program_input) == 1:
+            if program_input[0] == "run":
+                output = run_program(LOADED)
+
+                print("")
+
+                print("\n".join(output))
+
+            elif program_input[0] == "take":
+                print("Please write/paste the source of your program:")
+                LOADED = input("")
+
+            elif program_input[0] == "help":
+                print("""# load <X> - Load file <X> into the code.
+        # run - Run the loaded file.
+        # take - Brings up a prompt asking for input which is then loaded into the program.
+        # help - Shows help.
+
+        # cleaned - Print the contents of the cleaned program.
+        # source - Print the converted source.
+        # memory - Print the memory at the beginning of the program.""")
+
+            elif program_input[0] == "print":
+                print(LOADED)
+
+            elif program_input[0] == "cleaned":
+                print(clean_instructions(LOADED))
+
+            elif program_input[0] == "source":
+                print(convert_source(clean_instructions(LOADED)))
+
+            elif program_input[0] == "memory":
+                memory = create_program_memory(
+                    convert_source(clean_instructions(LOADED)))
+
+                for i in range(10):
+                    for j in range(i*10, (i+1)*10):
+                        print(memory[j], end=" ")
+
+                    print("\n")
+
+            elif program_input[0] == "exit":
+                quit()
+
+
+main()
