@@ -271,32 +271,48 @@ def main():
 
             elif program_input[0] == "help":
                 print("""# load <X> - Load file <X> into the code.
-        # run - Run the loaded file.
-        # take - Brings up a prompt asking for input which is then loaded into the program.
-        # help - Shows help.
+# run - Run the loaded file.
+# take - Brings up a prompt asking for input which is then loaded into the program.
+# help - Shows help.
 
-        # cleaned - Print the contents of the cleaned program.
-        # source - Print the converted source.
-        # memory - Print the memory at the beginning of the program.""")
+# cleaned - Print the contents of the cleaned program.
+# source - Print the converted source.
+# memory - Print the memory at the beginning of the program.""")
 
             elif program_input[0] == "print":
-                print(LOADED)
+                if LOADED != "":
+                  print(LOADED)
+
+                else:
+                  print("No program loaded.")
 
             elif program_input[0] == "cleaned":
-                print(clean_instructions(LOADED))
+                if LOADED != "":
+                  print(clean_instructions(LOADED))
+
+                else:
+                  print("No program loaded.")
 
             elif program_input[0] == "source":
-                print(convert_source(clean_instructions(LOADED)))
+                if LOADED != "":
+                  print(convert_source(clean_instructions(LOADED)))
+
+                else:
+                  print("No program loaded.")
 
             elif program_input[0] == "memory":
-                memory = create_program_memory(
-                    convert_source(clean_instructions(LOADED)))
+                if LOADED != "":
+                  memory = create_program_memory(
+                      convert_source(clean_instructions(LOADED)))
 
-                for i in range(10):
-                    for j in range(i*10, (i+1)*10):
-                        print(memory[j], end=" ")
+                  for i in range(10):
+                      for j in range(i*10, (i+1)*10):
+                          print(memory[j], end=" ")
 
-                    print("\n")
+                      print("\n")
+
+                else:
+                  print("No program loaded.")
 
             elif program_input[0] == "exit":
                 quit()
