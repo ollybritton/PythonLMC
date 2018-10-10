@@ -1,31 +1,5 @@
         INP
-        STA VALUE
-        LDA ZERO
-        STA TRINUM
-        STA N
-LOOP    LDA TRINUM
-        SUB VALUE
-        BRP ENDLOOP
-        LDA N
-        ADD ONE
-        STA N
-        ADD TRINUM
-        STA TRINUM
-        BRA LOOP
-ENDLOOP LDA VALUE
-        SUB TRINUM
-        BRZ EQUAL
-        LDA ZERO
-        OUT
-        BRA DONE
-EQUAL   LDA N
-        OUT
-DONE    HLT
-VALUE   DAT
-TRINUM  DAT
-N       DAT
-ZERO    DAT 000
-ONE     DAT 001
-// Test if input is a triangular number
-// If is sum of 1 to n output n
-// otherwise output zero
+        STA DATA
+        LDA DATA
+        OTC
+DATA    DAT
